@@ -3,25 +3,27 @@ public class EmployeeWage {
 		int IS_FULL_TIME = 1;
 		int IS_PART_TIME = 2;
 		int WAGE_PER_HOUR = 20;
-		int FULL_DAY_HOUR = 8;
-		int PART_TIME_HOUR = 4;
-		double empCheck = Math.floor(Math.random() * 10 ) %3;
+
+		int empCheck = (int)Math.floor(Math.random() * 10 ) %3;
 		int dailyWage=0;
+		int empHrs=0;
 
 		System.out.println("Welcome to Employee Wage Program");
-		if (empCheck == IS_FULL_TIME) {
-			System.out.println("Employee is Present.");
-			dailyWage=WAGE_PER_HOUR*FULL_DAY_HOUR;
-		}
-		else if (empCheck == IS_PART_TIME) {
-			System.out.println("Employee is Part time Present.");
-			dailyWage=WAGE_PER_HOUR*PART_TIME_HOUR;
-		}
-		else 
+		switch (empCheck)
 		{
-			System.out.println("Employee is Absent.");
+		case 0:
+			empHrs=0;
+			break;
+		case 1:
+			empHrs=4;
+			break;
+		case 2:
+			empHrs=8;
+			break;
 		}
-		System.out.println("daily wage of employee is:" + dailyWage);
+		dailyWage=WAGE_PER_HOUR*empHrs;
+		System.out.println("Daily wage of employee:"+ dailyWage);
+		
 	}
 
 }
