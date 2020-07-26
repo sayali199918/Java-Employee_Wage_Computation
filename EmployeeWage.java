@@ -1,70 +1,97 @@
-import java.util.*;
-public class EmployeeWage {
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.lang.Math;
+import java.lang.reflect.Array;
+class EmployeeWage{
+    static Scanner sc = new Scanner(System.in);
+    static Map<String,Integer> companyWages = new HashMap<String,Integer>();
+    // static ArrayList<Companies> companiesArray = new ArrayList<>();
+    static Companies companiesArray[];
+    public static void main(String[] args) {
 
-		public static final int IS_ABSENT = 0;
-		public static final int IS_PART_TIME = 1;
-		public static final int IS_FULL_TIME = 2;
-
-		private static String company;
-		private static int workingHr;
-		private static  int WAGE_PER_HOUR;
-		private static int MAX_HR_IN_MONTH;
-		private static int NUM_OF_WORKING_DAYS;
-
-		EmployeeWage(String company,int WAGE_PER_HOUR,int workingHr,int MAX_HR_IN_MONTH,int NUM_OF_WORKING_DAYS)
-		 {
-			  this.company=company;
-			  this.WAGE_PER_HOUR=WAGE_PER_HOUR;
-			  this.workingHr=workingHr;
-			  this.MAX_HR_IN_MONTH=MAX_HR_IN_MONTH;
-			  this.NUM_OF_WORKING_DAYS=NUM_OF_WORKING_DAYS;
-		 }
-		  public static int monthlyWage()
-		  {
-			 int empHrs=0;
-			 int empWage=0;
-			 int totalWorkingHrs = 0;
-			 int totalWorkingDays = 0;
-			 int totalWage=0;
-
-		//computation
-		while(totalWorkingHrs <= MAX_HR_IN_MONTH && totalWorkingDays <= NUM_OF_WORKING_DAYS)
-		{
-
-			totalWorkingDays++;
-			int empCheck = (int)Math.floor(Math.random() * 10)%3;
-			switch (empCheck)
-			{
-				case 0:
-					empHrs=0;
-					break;
-				case 1:
-					empHrs=4;
-					break;
-				case 2:
-					empHrs=8;
-					break;
-			}
-
-			totalWorkingHrs+=empHrs;
-			empWage=empHrs*WAGE_PER_HOUR;
-			totalWage+=empWage;
-		}
-		System.out.println("Monthly wage of employee of "+company+" is:"+totalWage);
-		return totalWage;
-
+        System.out.println("1.Add company 2.Exit");
+        int choice = sc.nextInt();
+        switch(choice){
+            case 1: addCompany();
+                break;
+            case 2:System.exit(1);
+            default:System.out.println("Invalid choice");
 	}
-		public static void main(String[] args) {
-			Map<String, Integer> company=new HashMap<>();
-			EmployeeWage company1 = new EmployeeWage("DMart", 20, 7, 100, 25);
-			company.put("DMart",company1.monthlyWage());
-			EmployeeWage company2 = new EmployeeWage("jio", 15, 8, 120, 30);
-			company.put("jio",company2.monthlyWage());
-			EmployeeWage company3 = new EmployeeWage("Big bazar", 25, 9, 130, 35);
-			company.put("Big bazar",company3.monthlyWage());
-			System.out.println("DMart : "+company.get("DMart"));
-			System.out.println("jio : "+company.get("jio"));
-			System.out.println("Big bazar : "+company.get("Big bazar"));
-		}
+        printCompanyWages();
+    }
+
+    static void addCompany(){
+        int wage;
+        int totalDays;
+        int hoursInDay;
+        int totalHours;
+        String name="";
+        int numberOfCompanies;
+        System.out.println("Enter number of companies you want to add");
+        numberOfCompanies=sc.nextInt();
+        companiesArray= new Companies[numberOfCompanies];
+        for(int companyIndex=0;companyIndex<numberOfCompanies;companyIndex++){
+            System.out.println("Enter name of Company");
+            name=sc.next();
+            System.out.println("Enter wage per hour");
+            wage=sc.nextInt();
+            System.out.println("Enter total days");
+            totalDays=sc.nextInt();
+            System.out.println("Enter hours per day");
+            hoursInDay=sc.nextInt();
+            System.out.println("Enter total hours in month");
+            totalHours=sc.nextInt();
+            companiesArray[companyIndex]=new Companies(wage,hoursInDay,totalDays,totalHours,name);
+            computeEmployeeWage(companiesArray[companyIndex].companyName,companiesArray[companyIndex].FULL_DAY_HOUR,companiesArray[companyIndex].TOTAL_WORKING_HOURS,companiesArray[companyIndex].WORKING_DAY_IN_MONTH,companiesArray[companyIndex].WAGE_PER_HOUR);
+            
+        }
+    }
+    static void printCompanyWages(){
+        companyWages.forEach((company,wage)->System.out.println("Total wage for company: "+company+" is: "+wage));
+    }
+    static void computeEmployeeWage(String companyName, int FULL_DAY_HOUR,int TOTAL_WORKING_HOURS, int WORKING_DAY_IN_MONTH,int WAGE_PER_HOUR){
+        int dailyHours=0;
+        int monthlyHours=0;
+        int hours=0;
+        int days=0;
+        final int FULL_TIME = 1;
+        final int PART_TIME = 2;
+        while( hours <= TOTAL_WORKING_HOURS && days <= WORKING_DAY_IN_MONTH ){       
+            dailyHours=0;
+            int employeeCheck = (int) Math.round(Math.random()*10)%3;
+            switch (employeeCheck){
+            case FULL_TIME:
+                dailyHours = FULL_DAY_HOUR+dailyHours;
+                break;
+            case PART_TIME:
+                dailyHours=FULL_DAY_HOUR/2+dailyHours;
+                break;
+            default:
+                dailyHours+=0;
+            }
+            hours+=dailyHours;
+            days++;
+            monthlyHours+=dailyHours;
+        }
+        companyWages.put(companyName,(WAGE_PER_HOUR*monthlyHours));
+    }
+
+}
+
+class Companies{
+    final int WAGE_PER_HOUR ;
+    final int FULL_DAY_HOUR ;
+    final int WORKING_DAY_IN_MONTH;
+    final int TOTAL_WORKING_HOURS;
+    String companyName ;
+    Companies(int wagePerHour, int fullDayHours, int totalWorkingDayinMonth,int totalWorkingHours,String companyName){
+        this.WAGE_PER_HOUR=wagePerHour;
+        this.FULL_DAY_HOUR=fullDayHours;
+        this.WORKING_DAY_IN_MONTH=totalWorkingDayinMonth;
+        this.TOTAL_WORKING_HOURS=totalWorkingHours;
+        this.companyName=companyName;
+    }
 }
 
